@@ -22,4 +22,14 @@ By default, rdash-angular includes [`ui.bootstrap`](http://angular-ui.github.io/
 If you'd like to include any additional modules/packages not included with rdash-angular, add them to your `bower.json` file and then update the `src/index.html` file, to include them in the minified distribution output.
 
 
+### Packaging the app
+
+You have to package on the OS you want to distribute the app.
+
+Make a zip with the files : 
+* dist directory
+* package.json
+
+Rename it change .zip in .nw, and run it with the nw binary.
+
 Made with RDash-angular (https://github.com/rdash/rdash-angular)
