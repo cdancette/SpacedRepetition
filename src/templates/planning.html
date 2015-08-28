@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-md-7">
+       <input type="date" id="date" ng-model="date" ng-change="load()" class="form-control" /></div>
+       <a class="btn btn-default" ng-click="today()" role="button">Aujourd'hui</a>
+   
+</div>
+
+<div class="row">
+  <div class="col-lg-11">
+    <rd-widget>
+    <rd-widget-header icon="fa-tasks" title="Semaine du {{string}}">
+    <ul class="pagination pagination-sm pull-right">
+          <li><a ng-click="prevWeek()">&laquo;</a></li>
+          <li><a ng-click="nextWeek()">&raquo;</a></li>
+        </ul>
+      </rd-widget-header>
+      <rd-widget-body classes="no-padding">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr><th>Lundi</th><th>Mardi</th><th>Mercredi</th><th>Jeudi</th><th>Vendredi</th><th>Samedi</th><th>Dimanche</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td ng-repeat="day in arrCours">
+                  <table>
+                    <tr ng-repeat="cour in day"><td>{{cour.name}}</td></tr>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+      </rd-widget-body>
+    <rd-widget>
+  </div>
+</div>
+
+   
