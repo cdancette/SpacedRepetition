@@ -25,6 +25,12 @@ angular.module('elenApp').config(['$stateProvider', '$urlRouterProvider',
                 url: '/add',
                 controller: 'AddCtrl',
                 templateUrl: 'templates/add.html'
-            });
+            })
+
+            .state('edit', {
+                url: '/edit/:id',
+                controller: 'EditCtrl',
+                templateUrl: 'templates/edit.html'
+            })
     }
 ]);

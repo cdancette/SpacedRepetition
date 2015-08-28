@@ -1,9 +1,3 @@
-<div class="row alerts-container" data-ng-controller="AlertsCtrl" data-ng-show="alerts.length">
-  <div class="col-xs-12">
-    <alert data-ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-  </div>
-</div>
-
 <div class="row">
 	<div class="col-lg-11 col-md-6 col-xs-12">
 		<rd-widget>
@@ -31,7 +25,10 @@
 							<tr><th class="text-center">Répetition</th><th>Cours</th></tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="cour in cours"><td class="text-center">1</td><td>{{cour.name}}</td></tr>
+							<tr ng-repeat="cour in cours">
+								<td class="text-center">{{cour.repetition || 1}}</td>
+								<td><a ui-sref="edit({id: cour._id})">{{cour.name}}</a></td>
+							</tr>
 
 						</tbody>
 					</table>

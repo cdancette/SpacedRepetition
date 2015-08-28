@@ -24,7 +24,9 @@
               <tr>
                 <td ng-repeat="day in arrCours">
                   <table>
-                    <tr ng-repeat="cour in day"><td>{{cour.name}}</td></tr>
+                    <tr ng-repeat="cour in day">
+                      <td><a ui-sref="edit({id: cour._id})">{{cour.name}}</a></td>
+                    </tr>
                   </table>
                 </td>
               </tr>

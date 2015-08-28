@@ -3,9 +3,9 @@
  */
 
 angular.module('elenApp')
-    .controller('MasterCtrl', ['$scope', '$cookieStore', MasterCtrl]);
+    .controller('MasterCtrl', ['$scope', '$cookieStore','$state', MasterCtrl]);
 
-function MasterCtrl($scope, $cookieStore) {
+function MasterCtrl($scope, $cookieStore, $state) {
     /**
      * Sidebar Toggle & Cookie Control
      */
@@ -36,6 +36,7 @@ function MasterCtrl($scope, $cookieStore) {
     window.onresize = function() {
         $scope.$apply();
     };
+
 }
 
 //*****************Controlleurs maison
@@ -46,6 +47,8 @@ angular.module('elenApp')
 
 /////////HomeCtrl
 .controller('HomeCtrl', ['$scope', 'db', 'dateFactory', function($scope, db, dateFactory) {
+
+  $scope.title = "Accueil";
 
   db.findCoursByDate(new Date(), function(data) {
       $scope.cours = data;
@@ -61,6 +64,8 @@ angular.module('elenApp')
 //*********PlanningCtrl
 .controller('PlanningCtrl', ['$scope', 'db', 'dateFactory', 
   function($scope, db, dateFactory) {
+
+  $scope.title = "Planning";
 
   $scope.date = new Date();
 
@@ -117,4 +122,29 @@ angular.module('elenApp')
     coursFactory.createCours(cours);
     $state.go('index');
   }
+}])
+
+.controller('EditCtrl', ['$scope','db', '$stateParams', '$state', function($scope, db, $stateParams, $state) {
+
+  db.findOne({_id: $stateParams.id}, function(err, data) {
+    $scope.cours = data;
+    if(data) {
+      db.find({name: $scope.cours.name}, function(err, data) {
+        $scope.list = data;
+        console.log($scope.list[0].name)
+        $scope.$apply();
+      });
+    }
+  });
+
+
+  $scope.supprimer = function() {
+    database.remove({name: $scope.cours.name},{multi: true}, function(err, n) {
+      console.log("suppressed" + n);
+      if(err) console.log(err);
+      $state.go('index');
+    });
+  };
+
+
 }]);

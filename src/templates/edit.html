@@ -1,0 +1,20 @@
+<div class="row">
+
+  <div class="col-lg-6">
+    <rd-widget>
+      <rd-widget-header icon="fa-tasks" title="Dates du cours {{list[0].name}}">
+      </rd-widget-header>
+      <rd-widget-body classes="">
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="cours in list">{{cours.date | niceDate}}</li>
+        </ul>
+        <button class="btn btn-sm btn-danger" ng-bootbox-confirm="Vraiment supprimer ?"
+            ng-bootbox-confirm-action="supprimer(cours)">
+            Supprimer ce cours
+        </button>
+
+      </rd-widget-body>
+      
+    </rd-widget>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 
-angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDate'])
+angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDate', 'ngBootbox'])
 
 
 
@@ -14,6 +14,8 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 		})
 	}
 
+	factory.findOne = function(criteria, callback){ database.findOne(criteria, callback)};
+
 	factory.find = function(criteria, callback) {
 		return database.find(criteria, function(err, doc) {
 			callback(err, doc);
@@ -26,6 +28,13 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 
 	factory.findCoursByDate = function(date, callback) {
 		this.find({date: dateFactory.dateToString(date)}, function(err, docs) {
+			if(err) console.log(err);
+			return callback(docs);
+		});
+	}
+
+	factory.findCoursByName = function(name, callback) {
+		this.find({name: name}, function(err, docs) {
 			if(err) console.log(err);
 			return callback(docs);
 		});
@@ -46,6 +55,7 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 
 	factory.createCours = function(cours) {
 		cours.repetition = 1;
+		console.log(cours);
 		db.addCours(cours);
 		cours.date.setDate(cours.date.getDate() +1);
 		cours.repetition = 2;
@@ -103,7 +113,16 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 	}
 
 	return factory;
-});
+})
+
+
+.filter('niceDate', ['dateFactory', function(dateFactory) {
+	return function(input) {
+		var out = dateFactory.stringToDate(input);
+		return out.toLocaleString("fr-FR", {weekday: "long", year: "numeric", month: "long", day: "numeric"});
+	};
+}]);
+
 
 
 // Load native UI library

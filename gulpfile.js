@@ -28,7 +28,7 @@ var paths = {
 gulp.task('usemin', function() {
     return gulp.src(paths.index)
         .pipe(usemin({
-            js: [minifyJs(), 'concat'],
+            js: [sourcemaps.init(), minifyJs(), 'concat', sourcemaps.write('.')],
             css: [minifyCss({keepSpecialComments: 0}), 'concat'],
         }))
         .pipe(gulp.dest('dist/'));
