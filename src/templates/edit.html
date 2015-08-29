@@ -6,13 +6,20 @@
       </rd-widget-header>
       <rd-widget-body classes="">
         <ul class="list-group">
-          <li class="list-group-item" ng-repeat="cours in list">{{cours.date | niceDate}}</li>
+
+          <li class="list-group-item" ng-repeat="cours in list | orderBy:'repetition'">
+            <button class="btn btn-sm btn-danger pull-right" ng-click="deleteOne(cours)"> <i class="fa fa-trash-o"></i></button>
+            <button class="btn btn-sm btn-info pull-right"> <i class="fa fa-edit"></i></button>
+            <span class="edit-badge badge pull-left">{{cours.repetition}}</span>             {{cours.date | niceDate}}
+          </li>
         </ul>
+        <button class="btn btn-sm btn-info">
+            Ajouter une date
+        </button>
         <button class="btn btn-sm btn-danger" ng-bootbox-confirm="Vraiment supprimer ?"
             ng-bootbox-confirm-action="supprimer(cours)">
             Supprimer ce cours
         </button>
-
       </rd-widget-body>
       
     </rd-widget>

@@ -67,9 +67,30 @@ angular.module('elenApp')
 
   $scope.title = "Planning";
 
-  $scope.date = new Date();
+  $scope.dragging = false;
 
-  console.log($scope.date.toLocaleString("fr-FR"));
+  $scope.start = function() {
+    $scope.dragging = true;
+    $scope.$apply();
+  }
+
+  $scope.stop = function() {
+    $scope.dragging = false;
+  }
+
+  $scope.dropped = function(){
+    angular.forEach($scope.arrCours, function(day, key) {
+      angular.forEach(day, function(cours, key2) {
+        db.updateCoursDate(cours, key);
+      })
+    });
+
+    $scope.load();
+    $scope.$apply();
+
+  }
+
+  $scope.date = new Date();
 
   $scope.nextWeek = function() {
     $scope.date.setDate($scope.date.getDate() + 7);
@@ -81,7 +102,7 @@ angular.module('elenApp')
     $scope.load();
   }
 
-  $scope.today = function() {
+  $scope.today = function() { 
     $scope.date = new Date();
     $scope.load();
   }
@@ -136,6 +157,14 @@ angular.module('elenApp')
       });
     }
   });
+
+  $scope.deleteOne = function(cours) {
+    console.log(cours);
+    db.deleteOneCours(cours, function(err, docs) {
+      console.log(docs);
+      $scope.$apply();
+    });
+  }
 
 
   $scope.supprimer = function() {

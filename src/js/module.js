@@ -1,5 +1,5 @@
 
-angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDate', 'ngBootbox'])
+angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDate', 'ngBootbox', 'ngDragDrop'])
 
 
 
@@ -42,8 +42,33 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 
 
 	factory.addCours = function(cours, callback) {
-		coursToSave = {name: cours.name, date: dateFactory.dateToString(cours.date)}
+		coursToSave = {name: cours.name, repetition: cours.repetition, date: dateFactory.dateToString(cours.date)}
 		this.saveObject(coursToSave, callback);
+	}
+
+	factory.updateCoursDate = function(cours, newDay) {
+		var date = dateFactory.stringToDate(cours.date);
+		console.log(cours);
+		console.log(date);
+		var day = (date.getDay() + 6) % 7; //monday is 1, sunday is 0
+		console.log("day : "+day);
+		console.log("newDay : " + newDay);
+		var diff = newDay - day; //monday is 1
+		console.log("diff : " + diff);
+		date.setDate(date.getDate() + diff);
+		console.log(date);
+		var newStringDate = dateFactory.dateToString(date);
+
+		database.update({_id: cours._id}, {$set: {date: newStringDate}}, {}, function(err, num, newDoc) {
+			if(err) console.log("err " + err);
+			console.log("num" + num);
+		});
+
+		
+	}
+
+	factory.deleteOneCours = function(cours, callback) {
+		database.remove({_id: cours._id}, {}, callback);
 	}
 
     return factory;
@@ -63,13 +88,14 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 		cours.date.setDate(cours.date.getDate() +2);
 		cours.repetition = 3;
 		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +7);
+		cours.date.setDate(cours.date.getDate() +4);
 		cours.repetition = 4;
 		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +50);
+		cours.date.setDate(cours.date.getDate() +23);
 		cours.repetition = 5;
 		db.addCours(cours);
 	}
+
 	return factory;
 }])
 

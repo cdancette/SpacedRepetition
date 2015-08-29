@@ -23,6 +23,7 @@
     "angular": "~1.2.21",
     "angular-bootstrap": "~0.11.0",
     "angular-cookies": "~1.2.21",
+    "angular-dragdrop": "~1.0.11",
     "angular-input-date": "~1.0.4",
     "angular-moment": "~0.10.2",
     "angular-ui-router": "^0.2.10",
