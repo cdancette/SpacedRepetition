@@ -14,28 +14,41 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 		})
 	}
 
+	function convertStringToDates(array, callback) {
+		angular.forEach(array, function(cours) {
+				cours.date = dateFactory.stringToDate(cours.date.valueOf());
+			});
+	}
+
 	factory.findOne = function(criteria, callback){ database.findOne(criteria, callback)};
 
 	factory.find = function(criteria, callback) {
-		return database.find(criteria, function(err, doc) {
-			callback(err, doc);
-		})
+		database.find(criteria, function(err, docs) {
+			convertStringToDates(docs);
+			return callback(err, docs);
+		});
 	}
 
 	factory.findAllCours = function(callback) {
-		this.find({}, function(err, docs) {console.log(err); callback(docs)});
+		this.find({}, function(err, docs) {
+			console.log(err);
+			convertStringToDates(docs);
+			callback(docs)
+		});
 	}
 
 	factory.findCoursByDate = function(date, callback) {
 		this.find({date: dateFactory.dateToString(date)}, function(err, docs) {
 			if(err) console.log(err);
-			return callback(docs);
+				//convertStringToDates(docs);
+				return callback(docs);
 		});
 	}
 
 	factory.findCoursByName = function(name, callback) {
 		this.find({name: name}, function(err, docs) {
 			if(err) console.log(err);
+			convertStringToDates(docs);
 			return callback(docs);
 		});
 	}
@@ -71,6 +84,12 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 		database.remove({_id: cours._id}, {}, callback);
 	}
 
+	factory.updateCours = function(cours, callback) {
+		database.update({_id: cours._id}, {$set: {date: dateFactory.dateToString(cours.date), repetition: cours.repetition}}, function(err, docs) {
+			if(callback) callback(err, docs);
+		})
+	}
+
     return factory;
 
 }])
@@ -78,22 +97,39 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 .factory('coursFactory', ['db', function(db) {
 	var factory = {};
 
-	factory.createCours = function(cours) {
-		cours.repetition = 1;
-		console.log(cours);
-		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +1);
-		cours.repetition = 2;
-		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +2);
-		cours.repetition = 3;
-		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +4);
-		cours.repetition = 4;
-		db.addCours(cours);
-		cours.date.setDate(cours.date.getDate() +23);
-		cours.repetition = 5;
-		db.addCours(cours);
+	factory.createCours = function(cours, callback) {
+
+		var durations = {};
+		var oldDuration = 0;
+		paramdb.find({}).sort({duration: 1}).exec(function(err, docs) {
+			durations = docs;
+			cours.repetition = 1;
+			db.addCours(cours);
+			angular.forEach(durations, function(val, key) {
+				cours.repetition = cours.repetition +1;
+				cours.date.setDate(cours.date.getDate() + (val.duration - oldDuration));
+				db.addCours(cours);
+				oldDuration = val.duration;
+			});
+
+			callback();
+			/*
+			cours.repetition = 1;
+			db.addCours(cours);
+			cours.date.setDate(cours.date.getDate() +1);
+			cours.repetition = 2;
+			db.addCours(cours);
+			cours.date.setDate(cours.date.getDate() +2);
+			cours.repetition = 3;
+			db.addCours(cours);
+			cours.date.setDate(cours.date.getDate() +4);
+			cours.repetition = 4;
+			db.addCours(cours);
+			cours.date.setDate(cours.date.getDate() +23);
+			cours.repetition = 5;
+			db.addCours(cours);*/
+		})
+		
 	}
 
 	return factory;
@@ -144,8 +180,7 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 
 .filter('niceDate', ['dateFactory', function(dateFactory) {
 	return function(input) {
-		var out = dateFactory.stringToDate(input);
-		return out.toLocaleString("fr-FR", {weekday: "long", year: "numeric", month: "long", day: "numeric"});
+		return input.toLocaleString("fr-FR", {weekday: "long", year: "numeric", month: "long", day: "numeric"});
 	};
 }]);
 
@@ -158,6 +193,15 @@ var Datastore = require('nedb');
 var database = new Datastore(
 	{filename : getUserDataPath() + '/database.db', autoload: true}
 );
+var paramdb = new Datastore(
+	{filename : getUserDataPath() + '/parameters.db', autoload: true}
+);
+
+paramdb.count({}, function(err, count) { //Initialisation database
+	if (count == 0) {
+		paramdb.insert([{duration: 1}, {duration: 3}, {duration: 7}, {duration: 30}])
+	}
+});
 
 function getUserDataPath() {  
     var path = require('path');

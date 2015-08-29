@@ -140,12 +140,14 @@ angular.module('elenApp')
   $scope.cours = {}
   $scope.cours.date = new Date();
   $scope.addCours = function(cours) {
-    coursFactory.createCours(cours);
-    $state.go('index');
+    coursFactory.createCours(cours, function() {$state.go('index')});
   }
+  
 }])
 
-.controller('EditCtrl', ['$scope','db', '$stateParams', '$state', function($scope, db, $stateParams, $state) {
+.controller('EditCtrl', ['$scope','db', '$stateParams', '$state', '$ngBootbox', function($scope, db, $stateParams, $state, $ngBootbox) {
+
+  $scope.load = function() {
 
   db.findOne({_id: $stateParams.id}, function(err, data) {
     $scope.cours = data;
@@ -156,14 +158,21 @@ angular.module('elenApp')
         $scope.$apply();
       });
     }
-  });
+  })
+  }
+
+  $scope.load();
 
   $scope.deleteOne = function(cours) {
     console.log(cours);
-    db.deleteOneCours(cours, function(err, docs) {
-      console.log(docs);
-      $scope.$apply();
+    $ngBootbox.confirm('Vraiment supprimer?')
+    .then(function() {
+      db.deleteOneCours(cours, function(err, docs) {
+        $scope.load();
+        $scope.$apply();
+      });
     });
+
   }
 
 
@@ -175,5 +184,89 @@ angular.module('elenApp')
     });
   };
 
+  $scope.showForm = false;
 
-}]);
+  $scope.addForm = function() {
+    console.log("ok");
+    $scope.newCours = {name: $scope.cours.name};
+    $scope.newCours.date = new Date();
+    $scope.showForm = true;
+  }
+
+  $scope.hideForm = function() {
+     $scope.showForm = false;
+     console.log("cacher");
+  }
+
+  $scope.toogleEdit = function(cours) {
+    if (cours.editing) cours.editing = false;
+    else cours.editing = true;
+  }
+
+  $scope.updateCours =  function(cours) {
+    console.log("updating..");
+    console.log(cours);
+    db.updateCours(cours, function() {
+      console.log("updated");
+      $scope.load();
+      $scope.$apply();
+    });
+  }
+
+  $scope.addCours = function(cours) {
+    console.log("adding..");
+    db.addCours(cours, function() {
+      console.log("done");
+      $scope.showForm = false;
+      $scope.load();
+      $scope.$apply();
+    });
+  }
+
+
+}])
+
+.controller('ParametersCtrl', ['$scope', function($scope){
+    
+  $scope.load = function() {
+    paramdb.find({})
+    .sort({duration: 1})
+    .exec(function(err, docs) {
+      $scope.parameters = docs;
+      $scope.$apply();
+    })
+  }
+
+  $scope.load();
+
+  $scope.toogleEdit = function(param) {
+    if (param.editing) param.editing = false;
+    else param.editing = true;
+  }
+
+  $scope.addForm = function() {
+    $scope.newParam = {duration: 0};
+    $scope.showForm = true;
+  }
+
+  $scope.hideForm = function() {
+     $scope.showForm = false;
+     console.log("cacher");
+  }
+
+  $scope.addParam = function(param) {
+    paramdb.insert(param, function() {
+      $scope.showForm = false;
+      $scope.load();
+      $scope.$apply();
+    })
+  }
+
+  $scope.deleteParam = function(param) {
+    paramdb.remove({_id: param._id}, function() {
+      $scope.load();
+      $scope.$apply();
+    })
+  }
+
+}])

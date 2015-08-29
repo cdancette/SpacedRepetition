@@ -32,5 +32,11 @@ angular.module('elenApp').config(['$stateProvider', '$urlRouterProvider',
                 controller: 'EditCtrl',
                 templateUrl: 'templates/edit.html'
             })
+
+            .state('parameters', {
+                url: '/parameters', 
+                controller: 'ParametersCtrl', 
+                templateUrl: 'templates/parameters.html'
+            })
     }
 ]);

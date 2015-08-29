@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col-lg-6">
+    <rd-widget>
+      <rd-widget-header icon="fa-tasks" title="Modifier les paramètres">
+      </rd-widget-header>
+      <rd-widget-body classes="">
+        <ul class="list-group">
+
+          <li class="list-group-item" ng-repeat="param in parameters | orderBy:'duration'">
+            <button class="btn btn-sm btn-danger pull-right" ng-click="deleteParam(param)"> <i class="fa fa-trash-o"></i></button>
+            <button class="btn btn-sm btn-info pull-right" ng-click="toogleEdit(param)"> <i class="fa fa-edit"></i></button>
+            {{param.duration}}
+            <form class="form-inline" ng-show="param.editing">
+              <input type="number" class="form-control" ng-model="param.duration" />
+              <button type="submit" class="btn btn-success" ng-click="updateCours(cours)">Valider</button>
+            </form>
+          </li>
+          <li class="list-group-item" ng-show="showForm">
+            <form role="form">
+            <div class="form-group">
+              <label for="date">Durée</label>
+              <input type="number" ng-model="newParam.duration" class="form-control">
+              </div>
+              <button type="submit" ng-click="addParam(newParam)" class="btn btn-success">Ajouter</button>
+              <button type="submit" ng-click="hideForm()" class="btn btn-default">Annuler</button>
+          </form>    
+        </li>
+        </ul>
+        <button class="btn btn-sm btn-info" ng-click="addForm()">
+            Ajouter un paramètre
+        </button>
+      </rd-widget-body>
+      
+    </rd-widget>
+  </div>
+</div>

@@ -9,13 +9,33 @@
 
           <li class="list-group-item" ng-repeat="cours in list | orderBy:'repetition'">
             <button class="btn btn-sm btn-danger pull-right" ng-click="deleteOne(cours)"> <i class="fa fa-trash-o"></i></button>
-            <button class="btn btn-sm btn-info pull-right"> <i class="fa fa-edit"></i></button>
-            <span class="edit-badge badge pull-left">{{cours.repetition}}</span>             {{cours.date | niceDate}}
+            <button class="btn btn-sm btn-info pull-right" ng-click="toogleEdit(cours)"> <i class="fa fa-edit"></i></button>
+            <span class="edit-badge badge pull-left">{{cours.repetition}}</span>
+            {{cours.date | niceDate}}
+
+            <form class="form-inline" ng-show="cours.editing">
+              <input type="number" class="form-control" ng-model="cours.repetition" />
+              <input type="date" class="form-control" ng-model="cours.date">
+              <button type="submit" class="btn btn-success" ng-click="updateCours(cours)">Valider</button>
+            </form>
+
           </li>
+          <li class="list-group-item" ng-show="showForm">
+            <form role="form">
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input type="date" ng-model="newCours.date" class="form-control">
+              </div>
+              <button type="submit" ng-click="addCours(newCours)" class="btn btn-success">Ajouter</button>
+              <button type="submit" ng-click="hideForm()" class="btn btn-default">Annuler</button>
+          </form>    
+        </li>
         </ul>
-        <button class="btn btn-sm btn-info">
+
+        <button class="btn btn-sm btn-info" ng-click="addForm()">
             Ajouter une date
         </button>
+
         <button class="btn btn-sm btn-danger" ng-bootbox-confirm="Vraiment supprimer ?"
             ng-bootbox-confirm-action="supprimer(cours)">
             Supprimer ce cours
