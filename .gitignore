@@ -46,3 +46,9 @@ Icon
 
 # Bower components
 /src/components
+
+#builds
+/builds
+
+#idea
+/.idea
