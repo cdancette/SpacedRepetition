@@ -26,10 +26,15 @@ If you'd like to include any additional modules/packages not included with rdash
 
 You have to package on the OS you want to distribute the app.
 
-Make a zip with the files : 
+Make a directory with the files : 
 * dist directory
 * package.json
 
-Rename it change .zip in .nw, and run it with the nw binary.
+Then install npm dependancies (npm install --production)
+
+zip all files
+
+Change extension from .zip to .n : there is the package.
+You can run it with the nw binary.
 
 Made with RDash-angular (https://github.com/rdash/rdash-angular)
