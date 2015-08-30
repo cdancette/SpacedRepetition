@@ -60,7 +60,7 @@ angular.module('elenApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngInputDat
 	}
 
 	factory.updateCoursDate = function(cours, newDay) {
-		var date = dateFactory.stringToDate(cours.date);
+		var date = cours.date;
 		console.log(cours);
 		console.log(date);
 		var day = (date.getDay() + 6) % 7; //monday is 1, sunday is 0

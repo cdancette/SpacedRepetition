@@ -50,13 +50,27 @@ angular.module('elenApp')
 
   $scope.title = "Accueil";
 
-  db.findCoursByDate(new Date(), function(data) {
-      $scope.cours = data;
-      $scope.$apply();
-  });
+  $scope.date = new Date();
 
-  var date = new Date("12/23/2015");
-  strDate = dateFactory.dateToString(date);
+  $scope.load = function() {
+    db.findCoursByDate($scope.date, function(data) {
+      $scope.list = data;
+      $scope.$apply();
+    })
+  }
+
+  $scope.load();
+
+  $scope.changeDay = function(number) {
+    $scope.date.setDate($scope.date.getDate() + number);
+    $scope.load();
+  }
+
+  $scope.today = function() {
+    $scope.date = new Date();
+    $scope.load();
+  }
+
 }])
 
 
@@ -142,7 +156,7 @@ angular.module('elenApp')
   $scope.addCours = function(cours) {
     coursFactory.createCours(cours, function() {$state.go('index')});
   }
-  
+
 }])
 
 .controller('EditCtrl', ['$scope','db', '$stateParams', '$state', '$ngBootbox', function($scope, db, $stateParams, $state, $ngBootbox) {
@@ -154,7 +168,6 @@ angular.module('elenApp')
     if(data) {
       db.find({name: $scope.cours.name}, function(err, data) {
         $scope.list = data;
-        console.log($scope.list[0].name)
         $scope.$apply();
       });
     }
@@ -164,7 +177,6 @@ angular.module('elenApp')
   $scope.load();
 
   $scope.deleteOne = function(cours) {
-    console.log(cours);
     $ngBootbox.confirm('Vraiment supprimer?')
     .then(function() {
       db.deleteOneCours(cours, function(err, docs) {
@@ -178,7 +190,6 @@ angular.module('elenApp')
 
   $scope.supprimer = function() {
     database.remove({name: $scope.cours.name},{multi: true}, function(err, n) {
-      console.log("suppressed" + n);
       if(err) console.log(err);
       $state.go('index');
     });
@@ -187,7 +198,6 @@ angular.module('elenApp')
   $scope.showForm = false;
 
   $scope.addForm = function() {
-    console.log("ok");
     $scope.newCours = {name: $scope.cours.name};
     $scope.newCours.date = new Date();
     $scope.showForm = true;
@@ -195,7 +205,6 @@ angular.module('elenApp')
 
   $scope.hideForm = function() {
      $scope.showForm = false;
-     console.log("cacher");
   }
 
   $scope.toogleEdit = function(cours) {
@@ -204,19 +213,14 @@ angular.module('elenApp')
   }
 
   $scope.updateCours =  function(cours) {
-    console.log("updating..");
-    console.log(cours);
     db.updateCours(cours, function() {
-      console.log("updated");
       $scope.load();
       $scope.$apply();
     });
   }
 
   $scope.addCours = function(cours) {
-    console.log("adding..");
     db.addCours(cours, function() {
-      console.log("done");
       $scope.showForm = false;
       $scope.load();
       $scope.$apply();
@@ -251,7 +255,6 @@ angular.module('elenApp')
 
   $scope.hideForm = function() {
      $scope.showForm = false;
-     console.log("cacher");
   }
 
   $scope.addParam = function(param) {
@@ -265,6 +268,14 @@ angular.module('elenApp')
   $scope.deleteParam = function(param) {
     paramdb.remove({_id: param._id}, function() {
       $scope.load();
+      $scope.$apply();
+    })
+  }
+
+  $scope.updateParam = function(param) {
+    paramdb.update({_id: param._id}, {$set: {duration: param.duration}}, function() {
+      $scope.load();
+      param.editing = false;
       $scope.$apply();
     })
   }

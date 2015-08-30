@@ -15,9 +15,12 @@
 <div class="row">
 	<div class="col-lg-11">
 		<rd-widget>
-			<rd-widget-header icon="fa-users" title="Cours">
-				<input type="text" placeholder="Search" class="form-control input-sm" />
-			</rd-widget-header>
+			<rd-widget-header icon="fa-users" title="Cours du {{date | niceDate}}">
+			<a class="btn btn-default btn-sm" ng-click="today()" role="button">Aujourd'hui</a>
+			 	<ul class="pagination pagination-sm pull-right">
+		         	<li><a ng-click="changeDay(-1)">&laquo;</a></li>
+		         	<li><a ng-click="changeDay(1)">&raquo;</a></li>
+			     </ul>			</rd-widget-header>
 			<rd-widget-body classes="no-padding">
 				<div class="table-responsive">
 					<table class="table">
@@ -25,9 +28,9 @@
 							<tr><th class="text-center">Répetition</th><th>Cours</th></tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="cour in cours">
-								<td class="text-center">{{cour.repetition || 1}}</td>
-								<td><a ui-sref="edit({id: cour._id})">{{cour.name}}</a></td>
+							<tr ng-repeat="cours in list">
+								<td class="text-center">{{cours.repetition || 1}}</td>
+								<td><a ui-sref="edit({id: cours._id})">{{cours.name}} ( {{cours.repetition}} )</a></td>
 							</tr>
 
 						</tbody>
